@@ -11,11 +11,14 @@ import {
   TextInput,
   Animated,
   Easing,
+  Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 
 
@@ -210,44 +213,12 @@ export default function HomeScreen({ onAccountPress }) {
         contentContainerStyle={[
           styles.feedContent,
           {
-            paddingTop: headerTop + 56 + 10,
+            paddingTop: 0,
             paddingBottom: navBottom + 64,
           },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── SEARCH BAR ─────────────────────────────── */}
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={18} color="#9EAAB8" />
-            <TextInput
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Search collections, coats, cashmere..."
-              placeholderTextColor="#687584"
-              style={styles.searchInput}
-              returnKeyType="search"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            {searchQuery.length > 0 ? (
-              <Pressable
-                onPress={() => setSearchQuery('')}
-                hitSlop={8}
-                style={styles.searchActionBtn}
-              >
-                <Ionicons name="close-circle" size={17} color="#8E99A8" />
-              </Pressable>
-            ) : (
-              <Pressable
-                hitSlop={8}
-                style={styles.searchActionBtn}
-              >
-                <Ionicons name="options-outline" size={18} color="#D4AF37" />
-              </Pressable>
-            )}
-          </View>
-        </View>
 
 
         {/* ── HERO BANNER ───────────────────────────── */}
@@ -481,7 +452,7 @@ const styles = StyleSheet.create({
   },
   heroBanner: {
     width: '100%',
-    height: 500,
+    height: SCREEN_HEIGHT,
     justifyContent: 'space-between',
   },
   heroBannerImage: {
@@ -491,28 +462,28 @@ const styles = StyleSheet.create({
     fontFamily: 'PlusJakartaSans_600SemiBold',
     fontSize: 11,
     letterSpacing: 3,
-    color: 'rgba(255,255,255,0.18)',
+    color: 'rgba(255,255,255,0.28)',
     textAlign: 'center',
-    marginTop: 180,
+    marginTop: SCREEN_HEIGHT * 0.38,
   },
   heroGradient: {
     flex: 1,
     justifyContent: 'flex-end',
     paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingBottom: 36,
     paddingTop: 60,
   },
   heroTitle: {
     fontFamily: 'PlayfairDisplay_600SemiBold',
-    fontSize: 52,
-    lineHeight: 58,
+    fontSize: 56,
+    lineHeight: 62,
     color: '#FFFFFF',
     letterSpacing: 0.5,
-    marginBottom: 22,
+    marginBottom: 24,
   },
   heroCtaBtn: {
     backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
+    paddingVertical: 17,
     alignItems: 'center',
     justifyContent: 'center',
   },
