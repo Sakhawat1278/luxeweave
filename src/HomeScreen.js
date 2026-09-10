@@ -101,7 +101,7 @@ export default function HomeScreen({ onAccountPress }) {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── HERO BANNER (Full Viewport Quiet Luxury) ──────────────── */}
+        {/* ── HERO BANNER (Quiet Luxury Editorial) ──────────────── */}
         <View style={styles.heroSection}>
           <ImageBackground
             source={IMG_QUIET_LUXURY}
@@ -109,23 +109,42 @@ export default function HomeScreen({ onAccountPress }) {
             imageStyle={styles.heroBannerImage}
             resizeMode="cover"
           >
-            {/* Top subtle scrim behind the brand header */}
+            {/* Top scrim for brand header legibility */}
             <LinearGradient
-              colors={['rgba(0,0,0,0.40)', 'transparent']}
+              colors={['rgba(0, 0, 0, 0.42)', 'transparent']}
               locations={[0, 0.16]}
-              style={StyleSheet.absoluteFillObject}
+              style={styles.heroTopScrim}
               pointerEvents="none"
             />
 
-            {/* Interactive touch target positioned over the SHOP COLLECTION button */}
-            <Pressable
-              onPress={handleShopCollection}
-              style={({ pressed }) => [
-                styles.shopCollectionTarget,
-                pressed && styles.shopCollectionTargetPressed,
+            {/* Bottom cinematic gradient overlay + editorial content */}
+            <LinearGradient
+              colors={[
+                'transparent',
+                'rgba(0, 0, 0, 0.25)',
+                'rgba(0, 0, 0, 0.75)',
               ]}
-              hitSlop={8}
-            />
+              locations={[0, 0.50, 0.95]}
+              style={styles.heroContentGradient}
+            >
+              {/* Season Overline */}
+              <Text style={styles.heroSeason}>AUTUMN / WINTER 24</Text>
+
+              {/* Editorial Title */}
+              <Text style={styles.heroTitle}>Quiet{'\n'}Luxury</Text>
+
+              {/* Shop Collection CTA Button */}
+              <Pressable
+                onPress={handleShopCollection}
+                style={({ pressed }) => [
+                  styles.heroCtaBtn,
+                  pressed && styles.heroCtaBtnPressed,
+                ]}
+                hitSlop={8}
+              >
+                <Text style={styles.heroCtaText}>SHOP COLLECTION</Text>
+              </Pressable>
+            </LinearGradient>
           </ImageBackground>
         </View>
 
@@ -299,20 +318,66 @@ const styles = StyleSheet.create({
   heroBanner: {
     width: '100%',
     height: SCREEN_HEIGHT,
+    position: 'relative',
   },
   heroBannerImage: {
     resizeMode: 'cover',
   },
-  shopCollectionTarget: {
+  heroTopScrim: {
     position: 'absolute',
-    left: '18%',
-    right: '18%',
-    top: '77.5%',
-    height: '9.3%',
-    backgroundColor: 'transparent',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 120,
   },
-  shopCollectionTargetPressed: {
-    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+  heroContentGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    paddingBottom: 44,
+    paddingTop: 80,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  heroSeason: {
+    fontFamily: 'PlusJakartaSans_500Medium',
+    fontSize: 11.5,
+    letterSpacing: 4,
+    color: 'rgba(255, 255, 255, 0.82)',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    marginBottom: 14,
+  },
+  heroTitle: {
+    fontFamily: 'PlayfairDisplay_600SemiBold',
+    fontSize: 58,
+    lineHeight: 64,
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+    textAlign: 'center',
+    marginBottom: 26,
+  },
+  heroCtaBtn: {
+    backgroundColor: '#FFFFFF',
+    width: '68%',
+    maxWidth: 240,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 0,
+  },
+  heroCtaBtnPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
+  },
+  heroCtaText: {
+    fontFamily: 'PlusJakartaSans_700Bold',
+    fontSize: 11.5,
+    letterSpacing: 2.5,
+    color: '#000000',
+    textAlign: 'center',
   },
 
   // ── Shop by Mood Section ───────────────────────────
