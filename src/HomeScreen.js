@@ -19,7 +19,7 @@ import { StatusBar } from 'expo-status-bar';
 
 
 
-const IMG_SCULPTED = require('../assets/hero_sculpted.jpg');
+const IMG_SCULPTED = require('../assets/hero_quiet_luxury.jpg');
 const IMG_ATELIER  = require('../assets/hero_atelier.jpg');
 const IMG_CAPSULE  = require('../assets/hero_capsule.jpg');
 
