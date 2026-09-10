@@ -267,7 +267,7 @@ export default function HomeScreen({ onAccountPress }) {
                     source={typeof slide.image === 'string' ? { uri: slide.image } : slide.image}
                     style={styles.bannerImage}
                     imageStyle={styles.bannerImageInner}
-                    defaultSource={require('../assets/hero_sculpted.jpg')}
+                    resizeMode="cover"
                   >
                     {/* Natural top lighting transitioning to cinematic dark vignette behind editorial text */}
                     <LinearGradient
@@ -544,6 +544,7 @@ const styles = StyleSheet.create({
   },
   bannerImageInner: {
     borderRadius: 0,
+    resizeMode: 'cover',
   },
   bannerGradient: {
     flex: 1,
