@@ -250,7 +250,39 @@ export default function HomeScreen({ onAccountPress }) {
         </View>
 
 
-        {/* ── SHOP BY MOOD SECTION ───────────────────── */}
+        {/* ── HERO BANNER ───────────────────────────── */}
+        <View style={styles.heroSection}>
+          <ImageBackground
+            source={IMG_SCULPTED}
+            style={styles.heroBanner}
+            imageStyle={styles.heroBannerImage}
+            resizeMode="cover"
+          >
+            {/* Watermark season text — barely visible mid-image */}
+            <Text style={styles.heroWatermark}>AUTUMN / WINTER</Text>
+
+            {/* Bottom gradient + title + CTA */}
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.55)']}
+              locations={[0.55, 1]}
+              style={styles.heroGradient}
+            >
+              <Text style={styles.heroTitle}>{'Quiet\nLuxury'}</Text>
+
+              <Pressable
+                hitSlop={8}
+                style={({ pressed }) => [
+                  styles.heroCtaBtn,
+                  pressed && { opacity: 0.85 },
+                ]}
+              >
+                <Text style={styles.heroCtaText}>SHOP COLLECTION</Text>
+              </Pressable>
+            </LinearGradient>
+          </ImageBackground>
+        </View>
+
+
         <View style={styles.moodSection}>
           <View style={styles.moodHeader}>
             <View>
@@ -443,82 +475,54 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // ── Hero Promo Banner Section ──────────────────────
+  // ── Hero Banner ────────────────────────────────────
   heroSection: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
-  bannerContainer: {
-    marginHorizontal: 16,
-    height: 480,
-    position: 'relative',
-    borderRadius: 0,
-    overflow: 'hidden',
-    backgroundColor: '#111111',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.10)',
-  },
-  bannerCard: {
+  heroBanner: {
     width: '100%',
-    height: '100%',
-    borderRadius: 0,
-    overflow: 'hidden',
+    height: 500,
+    justifyContent: 'space-between',
   },
-  bannerImage: {
-    width: '100%',
-    height: '100%',
-  },
-  bannerImageInner: {
-    borderRadius: 0,
+  heroBannerImage: {
     resizeMode: 'cover',
   },
-  bannerGradient: {
+  heroWatermark: {
+    fontFamily: 'PlusJakartaSans_600SemiBold',
+    fontSize: 11,
+    letterSpacing: 3,
+    color: 'rgba(255,255,255,0.18)',
+    textAlign: 'center',
+    marginTop: 180,
+  },
+  heroGradient: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingBottom: 32,
-    paddingTop: 20,
     justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingBottom: 28,
+    paddingTop: 60,
+  },
+  heroTitle: {
+    fontFamily: 'PlayfairDisplay_600SemiBold',
+    fontSize: 52,
+    lineHeight: 58,
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+    marginBottom: 22,
+  },
+  heroCtaBtn: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroCtaText: {
+    fontFamily: 'PlusJakartaSans_700Bold',
+    fontSize: 11.5,
+    letterSpacing: 3,
+    color: '#111111',
   },
 
-  // Editorial Text & CTA
-  bannerBottom: {
-    alignItems: 'flex-start',
-  },
-  bannerBadge: {
-    fontFamily: 'PlusJakartaSans_600SemiBold',
-    fontSize: 10.5,
-    letterSpacing: 2.4,
-    color: 'rgba(255, 255, 255, 0.72)',
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  bannerTitle: {
-    fontFamily: 'PlayfairDisplay_600SemiBold',
-    fontSize: 32,
-    lineHeight: 38,
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
-    marginBottom: 20,
-  },
-  ctaButton: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 13,
-    paddingHorizontal: 26,
-    borderRadius: 0,
-    alignSelf: 'flex-start',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  ctaButtonPressed: {
-    opacity: 0.85,
-    transform: [{ scale: 0.98 }],
-  },
-  ctaButtonText: {
-    fontFamily: 'PlusJakartaSans_700Bold',
-    fontSize: 11,
-    color: '#000000',
-    letterSpacing: 2,
-    textAlign: 'center',
-  },
 
   // Minimalist Segmented Pagination Inside Slider
   sliderPagination: {
