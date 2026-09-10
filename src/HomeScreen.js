@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,10 +7,6 @@ import {
   Platform,
   ScrollView,
   ImageBackground,
-  Image,
-  TextInput,
-  Animated,
-  Easing,
   Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,36 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-
-
-
-const IMG_SCULPTED = require('../assets/hero_quiet_luxury.jpg');
-const IMG_ATELIER  = require('../assets/hero_atelier.jpg');
-const IMG_CAPSULE  = require('../assets/hero_capsule.jpg');
-
-const HERO_SLIDERS = [
-  {
-    id: '1',
-    badge: 'LIMITED EDITION',
-    title: 'The Sculpted\nCollection',
-    cta: 'EXPLORE NOW',
-    image: IMG_SCULPTED,
-  },
-  {
-    id: '2',
-    badge: 'ATELIER CAPSULE',
-    title: 'The Monolith\nOvercoat',
-    cta: 'EXPLORE NOW',
-    image: IMG_ATELIER,
-  },
-  {
-    id: '3',
-    badge: 'AUTUMN / WINTER 2026',
-    title: 'Architectural\nMinimalism',
-    cta: 'EXPLORE NOW',
-    image: IMG_CAPSULE,
-  },
-];
+const IMG_QUIET_LUXURY = require('../assets/hero_quiet_luxury.png');
 
 const MOOD_CATEGORIES = [
   { id: 'new-in',      label: 'New in',      icon: 'sparkles-outline' },
@@ -68,99 +35,9 @@ const NAV_ITEMS = [
 
 export default function HomeScreen({ onAccountPress }) {
   const insets = useSafeAreaInsets();
+  const scrollViewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('home');
-  const [activeSlide, setActiveSlide] = useState(0);
   const [selectedMood, setSelectedMood] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const slideAnims = useRef(
-    HERO_SLIDERS.map((_, i) => new Animated.Value(i === 0 ? 1 : 0))
-  ).current;
-  const activeSlideRef = useRef(0);
-  const isAnimating = useRef(false);
-  const autoPlayTimer = useRef(null);
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-
-  const goToSlide = (nextIndex) => {
-    if (nextIndex === activeSlideRef.current || isAnimating.current) return;
-    const currentIndex = activeSlideRef.current;
-    isAnimating.current = true;
-
-    setActiveSlide(nextIndex);
-    activeSlideRef.current = nextIndex;
-
-    Animated.parallel([
-      Animated.timing(slideAnims[currentIndex], {
-        toValue: 0,
-        duration: 550,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnims[nextIndex], {
-        toValue: 1,
-        duration: 550,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      isAnimating.current = false;
-    });
-  };
-
-  const goToNextSlide = () => {
-    const next = (activeSlideRef.current + 1) % HERO_SLIDERS.length;
-    goToSlide(next);
-  };
-
-  const goToPrevSlide = () => {
-    const prev = (activeSlideRef.current - 1 + HERO_SLIDERS.length) % HERO_SLIDERS.length;
-    goToSlide(prev);
-  };
-
-  const startAutoPlay = () => {
-    if (autoPlayTimer.current) clearInterval(autoPlayTimer.current);
-    autoPlayTimer.current = setInterval(() => {
-      goToNextSlide();
-    }, 4500);
-  };
-
-  const resetAutoPlay = () => {
-    startAutoPlay();
-  };
-
-  useEffect(() => {
-    // Pre-warm image decoder for slides 2 & 3 so they show instantly on transition
-    Image.prefetch(Image.resolveAssetSource(IMG_ATELIER).uri);
-    Image.prefetch(Image.resolveAssetSource(IMG_CAPSULE).uri);
-    startAutoPlay();
-    return () => {
-      if (autoPlayTimer.current) clearInterval(autoPlayTimer.current);
-    };
-  }, []);
-
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.nativeEvent.pageX;
-    touchStartY.current = e.nativeEvent.pageY;
-  };
-
-  const handleTouchEnd = (e) => {
-    const dx = e.nativeEvent.pageX - touchStartX.current;
-    const dy = e.nativeEvent.pageY - touchStartY.current;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 35) {
-      if (dx < 0) {
-        goToNextSlide();
-      } else {
-        goToPrevSlide();
-      }
-      resetAutoPlay();
-    }
-  };
-
-  const handleIndicatorPress = (index) => {
-    if (index === activeSlideRef.current) return;
-    goToSlide(index);
-    resetAutoPlay();
-  };
 
   const headerTop = Math.max(insets.top, Platform.OS === 'android' ? 20 : 12);
   const navBottom = insets.bottom > 0 ? insets.bottom : 12;
@@ -171,6 +48,10 @@ export default function HomeScreen({ onAccountPress }) {
       return;
     }
     setActiveTab(key);
+  };
+
+  const handleShopCollection = () => {
+    scrollViewRef.current?.scrollTo({ y: SCREEN_HEIGHT - 60, animated: true });
   };
 
   return (
@@ -209,6 +90,7 @@ export default function HomeScreen({ onAccountPress }) {
 
       {/* ── SCROLLABLE FEED ─────────────────────────── */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.feed}
         contentContainerStyle={[
           styles.feedContent,
@@ -219,39 +101,34 @@ export default function HomeScreen({ onAccountPress }) {
         ]}
         showsVerticalScrollIndicator={false}
       >
-
-
-        {/* ── HERO BANNER ───────────────────────────── */}
+        {/* ── HERO BANNER (Full Viewport Quiet Luxury) ──────────────── */}
         <View style={styles.heroSection}>
           <ImageBackground
-            source={IMG_SCULPTED}
+            source={IMG_QUIET_LUXURY}
             style={styles.heroBanner}
             imageStyle={styles.heroBannerImage}
             resizeMode="cover"
           >
-            {/* Watermark season text — barely visible mid-image */}
-            <Text style={styles.heroWatermark}>AUTUMN / WINTER</Text>
-
-            {/* Bottom gradient + title + CTA */}
+            {/* Top subtle scrim behind the brand header */}
             <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.55)']}
-              locations={[0.55, 1]}
-              style={styles.heroGradient}
-            >
-              <Text style={styles.heroTitle}>{'Quiet\nLuxury'}</Text>
+              colors={['rgba(0,0,0,0.40)', 'transparent']}
+              locations={[0, 0.16]}
+              style={StyleSheet.absoluteFillObject}
+              pointerEvents="none"
+            />
 
-              <Pressable
-                hitSlop={8}
-                style={({ pressed }) => [
-                  styles.heroCtaBtn,
-                  pressed && { opacity: 0.85 },
-                ]}
-              >
-                <Text style={styles.heroCtaText}>SHOP COLLECTION</Text>
-              </Pressable>
-            </LinearGradient>
+            {/* Interactive touch target positioned over the SHOP COLLECTION button */}
+            <Pressable
+              onPress={handleShopCollection}
+              style={({ pressed }) => [
+                styles.shopCollectionTarget,
+                pressed && styles.shopCollectionTargetPressed,
+              ]}
+              hitSlop={8}
+            />
           </ImageBackground>
         </View>
+
 
 
         <View style={styles.moodSection}>
@@ -415,37 +292,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  // ── Search Bar ─────────────────────────────────────
-  searchContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 0,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-  },
-  searchInput: {
-    flex: 1,
-    fontFamily: 'PlusJakartaSans_400Regular',
-    fontSize: 13,
-    color: '#FFFFFF',
-    marginLeft: 10,
-    paddingVertical: 0,
-    includeFontPadding: false,
-  },
-  searchActionBtn: {
-    width: 28,
-    height: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
   // ── Hero Banner ────────────────────────────────────
   heroSection: {
     marginBottom: 28,
@@ -453,76 +299,20 @@ const styles = StyleSheet.create({
   heroBanner: {
     width: '100%',
     height: SCREEN_HEIGHT,
-    justifyContent: 'space-between',
   },
   heroBannerImage: {
     resizeMode: 'cover',
   },
-  heroWatermark: {
-    fontFamily: 'PlusJakartaSans_600SemiBold',
-    fontSize: 11,
-    letterSpacing: 3,
-    color: 'rgba(255,255,255,0.28)',
-    textAlign: 'center',
-    marginTop: SCREEN_HEIGHT * 0.38,
-  },
-  heroGradient: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingHorizontal: 20,
-    paddingBottom: 36,
-    paddingTop: 60,
-  },
-  heroTitle: {
-    fontFamily: 'PlayfairDisplay_600SemiBold',
-    fontSize: 56,
-    lineHeight: 62,
-    color: '#FFFFFF',
-    letterSpacing: 0.5,
-    marginBottom: 24,
-  },
-  heroCtaBtn: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 17,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroCtaText: {
-    fontFamily: 'PlusJakartaSans_700Bold',
-    fontSize: 11.5,
-    letterSpacing: 3,
-    color: '#111111',
-  },
-
-
-  // Minimalist Segmented Pagination Inside Slider
-  sliderPagination: {
+  shopCollectionTarget: {
     position: 'absolute',
-    bottom: 12,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
+    left: '18%',
+    right: '18%',
+    top: '77.5%',
+    height: '9.3%',
+    backgroundColor: 'transparent',
   },
-  indicatorTouch: {
-    paddingVertical: 6,
-    paddingHorizontal: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  paginationIndicator: {
-    height: 3,
-    borderRadius: 0,
-  },
-  paginationIndicatorActive: {
-    width: 24,
-    backgroundColor: '#D4AF37',
-  },
-  paginationIndicatorInactive: {
-    width: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.35)',
+  shopCollectionTargetPressed: {
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
   },
 
   // ── Shop by Mood Section ───────────────────────────
