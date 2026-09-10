@@ -7,6 +7,7 @@ import {
   Platform,
   ScrollView,
   ImageBackground,
+  Image,
   TextInput,
   Animated,
   Easing,
@@ -18,27 +19,31 @@ import { StatusBar } from 'expo-status-bar';
 
 
 
+const IMG_SCULPTED = require('../assets/hero_sculpted.jpg');
+const IMG_ATELIER  = require('../assets/hero_atelier.jpg');
+const IMG_CAPSULE  = require('../assets/hero_capsule.jpg');
+
 const HERO_SLIDERS = [
   {
     id: '1',
     badge: 'LIMITED EDITION',
     title: 'The Sculpted\nCollection',
     cta: 'EXPLORE NOW',
-    image: require('../assets/hero_sculpted.jpg'),
+    image: IMG_SCULPTED,
   },
   {
     id: '2',
     badge: 'ATELIER CAPSULE',
     title: 'The Monolith\nOvercoat',
     cta: 'EXPLORE NOW',
-    image: require('../assets/hero_atelier.jpg'),
+    image: IMG_ATELIER,
   },
   {
     id: '3',
     badge: 'AUTUMN / WINTER 2026',
     title: 'Architectural\nMinimalism',
     cta: 'EXPLORE NOW',
-    image: require('../assets/hero_capsule.jpg'),
+    image: IMG_CAPSULE,
   },
 ];
 
@@ -121,6 +126,9 @@ export default function HomeScreen({ onAccountPress }) {
   };
 
   useEffect(() => {
+    // Pre-warm image decoder for slides 2 & 3 so they show instantly on transition
+    Image.prefetch(Image.resolveAssetSource(IMG_ATELIER).uri);
+    Image.prefetch(Image.resolveAssetSource(IMG_CAPSULE).uri);
     startAutoPlay();
     return () => {
       if (autoPlayTimer.current) clearInterval(autoPlayTimer.current);
@@ -248,57 +256,51 @@ export default function HomeScreen({ onAccountPress }) {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {HERO_SLIDERS.map((slide, index) => {
-              const isCurrent = activeSlide === index;
-              return (
-                <Animated.View
-                  key={slide.id}
-                  style={[
-                    StyleSheet.absoluteFillObject,
-                    styles.bannerCard,
-                    {
-                      opacity: slideAnims[index],
-                      zIndex: isCurrent ? 2 : 1,
-                    },
-                  ]}
-                  pointerEvents={isCurrent ? 'auto' : 'none'}
+            {HERO_SLIDERS.map((slide, index) => (
+              <Animated.View
+                key={slide.id}
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  styles.bannerCard,
+                  { opacity: slideAnims[index] },
+                ]}
+                pointerEvents={activeSlide === index ? 'auto' : 'none'}
+              >
+                <ImageBackground
+                  source={slide.image}
+                  style={styles.bannerImage}
+                  imageStyle={styles.bannerImageInner}
+                  resizeMode="cover"
                 >
-                  <ImageBackground
-                    source={typeof slide.image === 'string' ? { uri: slide.image } : slide.image}
-                    style={styles.bannerImage}
-                    imageStyle={styles.bannerImageInner}
-                    resizeMode="cover"
+                  {/* Natural top lighting transitioning to cinematic dark vignette behind editorial text */}
+                  <LinearGradient
+                    colors={[
+                      'transparent',
+                      'rgba(0, 0, 0, 0.08)',
+                      'rgba(0, 0, 0, 0.78)',
+                    ]}
+                    locations={[0, 0.40, 0.92]}
+                    style={styles.bannerGradient}
                   >
-                    {/* Natural top lighting transitioning to cinematic dark vignette behind editorial text */}
-                    <LinearGradient
-                      colors={[
-                        'transparent',
-                        'rgba(0, 0, 0, 0.08)',
-                        'rgba(0, 0, 0, 0.78)',
-                      ]}
-                      locations={[0, 0.40, 0.92]}
-                      style={styles.bannerGradient}
-                    >
-                      {/* Editorial Content & CTA exactly like reference */}
-                      <View style={styles.bannerBottom}>
-                        <Text style={styles.bannerBadge}>{slide.badge}</Text>
-                        <Text style={styles.bannerTitle}>{slide.title}</Text>
+                    {/* Editorial Content & CTA exactly like reference */}
+                    <View style={styles.bannerBottom}>
+                      <Text style={styles.bannerBadge}>{slide.badge}</Text>
+                      <Text style={styles.bannerTitle}>{slide.title}</Text>
 
-                        <Pressable
-                          hitSlop={8}
-                          style={({ pressed }) => [
-                            styles.ctaButton,
-                            pressed && styles.ctaButtonPressed,
-                          ]}
-                        >
-                          <Text style={styles.ctaButtonText}>{slide.cta}</Text>
-                        </Pressable>
-                      </View>
-                    </LinearGradient>
-                  </ImageBackground>
-                </Animated.View>
-              );
-            })}
+                      <Pressable
+                        hitSlop={8}
+                        style={({ pressed }) => [
+                          styles.ctaButton,
+                          pressed && styles.ctaButtonPressed,
+                        ]}
+                      >
+                        <Text style={styles.ctaButtonText}>{slide.cta}</Text>
+                      </Pressable>
+                    </View>
+                  </LinearGradient>
+                </ImageBackground>
+              </Animated.View>
+            ))}
             {/* Minimalist Segmented Pagination Inside Slider */}
             <View style={styles.sliderPagination} pointerEvents="box-none">
               {HERO_SLIDERS.map((_, index) => {
